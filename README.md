@@ -18,3 +18,4 @@ npm run dev
 Then open the URL from the terminal.
 
 You can push this folder to GitLab as a regular Node.js project.
+
