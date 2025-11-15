@@ -1,13 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const bgGradient = "bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950";
 
 const App = () => {
   const [view, setView] = useState<"landing" | "dashboard">("landing");
+  const [showMentor, setShowMentor] = useState(false);
+
+  // Закрытие поп-апа по ESC
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setShowMentor(false);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
 
   return (
-    <div className={`${bgGradient} min-h-screen text-slate-50 flex flex-col items-center justify-center relative overflow-hidden`}>      
+    <div
+      className={`${bgGradient} min-h-screen text-slate-50 flex flex-col items-center justify-center relative overflow-hidden`}
+    >
       {/* Soft glow background accents */}
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -left-40 top-10 h-72 w-72 rounded-full bg-blue-600/40 blur-3xl" />
@@ -16,11 +26,24 @@ const App = () => {
 
       <AnimatePresence mode="wait">
         {view === "landing" ? (
-          <Landing key="landing" onEnter={() => setView("dashboard")} />
+          <Landing
+            key="landing"
+            onEnter={() => setShowMentor(true)} // 👉 теперь кнопка «Що це?» открывает поп-ап
+          />
         ) : (
           <Dashboard key="dashboard" onBack={() => setView("landing")} />
         )}
       </AnimatePresence>
+
+      {/* 👉 ВАЖНО: Pop-up рендерим ПОД контентом страницы */}
+      <MentorPopup
+        open={showMentor}
+        onClose={() => setShowMentor(false)}
+        onContinue={() => {
+          setShowMentor(false);
+          setView("dashboard");
+        }}
+      />
     </div>
   );
 };
@@ -40,13 +63,13 @@ const Landing: React.FC<LandingProps> = ({ onEnter }) => {
     >
       <header className="pt-6 text-center flex flex-col gap-3">
         <span className="tracking-[0.25em] text-xs uppercase text-slate-400">
-          Digital School · Self‑Service Hub
+          Digital School · Self-Service Hub
         </span>
         <h1 className="text-4xl md:text-5xl font-semibold tracking-tight bg-gradient-to-r from-slate-50 via-slate-200 to-slate-400 bg-clip-text text-transparent">
           PRJCTR INSTITUTE
         </h1>
         <p className="text-slate-400 max-w-xl mx-auto text-sm md:text-base">
-          Легка точка входу в усі AI‑інструменти школи. Один клік — і ти вже з ментором, базою знань або новим прототипом.
+          Легка точка входу в усі AI-інструменти школи. Один клік — і ти вже з ментором, базою знань або новим прототипом.
         </p>
       </header>
 
@@ -73,7 +96,7 @@ const Landing: React.FC<LandingProps> = ({ onEnter }) => {
 
           {/* Dotted wave ring */}
           <motion.div
-            className="absolute inset-6 rounded-full border border-dotted border-sky-400/60"          
+            className="absolute inset-6 rounded-full border border-dotted border-sky-400/60"
             animate={{ rotate: 360 }}
             transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
           />
@@ -118,13 +141,13 @@ const Dashboard: React.FC<DashboardProps> = ({ onBack }) => {
       title: "AI Telegram Mentee",
       tag: "бот для ДЗ",
       description:
-        "Тренований AI‑ментор, який швидко перевіряє домашні завдання та дає структурований фідбек у стилі кураторів PRJCTR.",
+        "Тренований AI-ментор, який швидко перевіряє домашні завдання та дає структурований фідбек у стилі кураторів PRJCTR.",
       action: "Відкрити бота",
       href: "https://t.me/AI_TEAMN4_BOT",
     },
     {
       id: 2,
-      title: "Your AI Assistant",
+      title: "Personal Knowledge Base",
       tag: "база знань",
       description:
         "Персоналізована база знань під твій курс.",
@@ -136,7 +159,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onBack }) => {
       title: "Mockup #1",
       tag: "prototype",
       description:
-        "Місце для наступного інструменту. Тут зʼявиться інтерактивний прототип або новий AI‑сервіс.",
+        "Місце для наступного інструменту. Тут зʼявиться інтерактивний прототип або новий AI-сервіс.",
       action: "Додати пізніше",
       href: "#",
     },
@@ -167,7 +190,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onBack }) => {
               PRJCTR INSTITUTE
             </h2>
             <p className="text-xs md:text-sm text-slate-400">
-              Self‑Service · AI‑ментори · курсові інструменти
+              Self-Service · AI-ментори · курсові інструменти
             </p>
           </div>
         </div>
@@ -233,5 +256,77 @@ const Dashboard: React.FC<DashboardProps> = ({ onBack }) => {
     </motion.div>
   );
 };
+
+/** ---------- Mentor Popup Component ---------- */
+const MentorPopup: React.FC<{ open: boolean; onClose: () => void; onContinue: () => void; }> = ({ open, onClose, onContinue }) => {
+  const videoSrc = `${import.meta.env.BASE_URL}heygen.mp4`;
+
+  return (
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+        >
+          <motion.div
+            className="relative w-full max-w-md rounded-3xl border border-slate-700/60 bg-slate-900/80 p-4 shadow-[0_18px_50px_rgba(15,23,42,0.85)] overflow-hidden"
+            initial={{ y: 24, opacity: 0, scale: 0.98 }}
+            animate={{ y: 0, opacity: 1, scale: 1 }}
+            exit={{ y: 16, opacity: 0, scale: 0.98 }}
+            transition={{ type: "spring", stiffness: 220, damping: 20 }}
+          >
+            {/* Close button */}
+            <button
+              onClick={onClose}
+              className="absolute right-3 top-3 rounded-full bg-slate-800/80 border border-slate-700/60 text-slate-300 hover:text-sky-300 px-2 py-1 text-xs"
+            >
+              ✕
+            </button>
+
+            <div className="flex flex-col gap-4 mt-6">
+              
+              {/* Bounded video container */}
+              <div className="rounded-2xl overflow-hidden border border-slate-700/60 bg-black max-h-[420px]">
+                <video
+                  src={videoSrc}
+                  autoPlay
+                  playsInline
+                  muted
+                  controls
+                  className="w-full max-h-[420px] object-contain bg-black"
+                />
+              </div>
+
+              <div className="text-center text-slate-300 text-sm">
+                Я — <span className="text-sky-300 font-medium">AI Ментор PRJCTR</span>.  
+                Дозволь показати, як працює наш Hub.
+              </div>
+
+              {/* Buttons */}
+              <div className="flex items-center justify-center gap-3 mt-2">
+                <button
+                  onClick={onContinue}
+                  className="rounded-full px-5 py-2 text-slate-950 bg-sky-400/90 hover:bg-sky-300 transition-colors shadow-[0_0_24px_rgba(56,189,248,0.5)]"
+                >
+                  Перейти в дашборд
+                </button>
+
+                <button
+                  onClick={onClose}
+                  className="rounded-full px-5 py-2 border border-slate-700/70 text-slate-300 hover:text-sky-300 bg-slate-900/60"
+                >
+                  Закрити
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+};
+
 
 export default App;
