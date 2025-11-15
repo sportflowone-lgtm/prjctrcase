@@ -7,9 +7,7 @@ const App = () => {
   const [view, setView] = useState<"landing" | "dashboard">("landing");
 
   return (
-    <div
-      className={`${bgGradient} min-h-screen text-slate-50 flex flex-col items-center justify-center relative overflow-hidden`}
-    >
+    <div className={`${bgGradient} min-h-screen text-slate-50 flex flex-col items-center justify-center relative overflow-hidden`}>      
       {/* Soft glow background accents */}
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -left-40 top-10 h-72 w-72 rounded-full bg-blue-600/40 blur-3xl" />
@@ -42,14 +40,13 @@ const Landing: React.FC<LandingProps> = ({ onEnter }) => {
     >
       <header className="pt-6 text-center flex flex-col gap-3">
         <span className="tracking-[0.25em] text-xs uppercase text-slate-400">
-          Digital School · Self-Service Hub
+          Digital School · Self‑Service Hub
         </span>
         <h1 className="text-4xl md:text-5xl font-semibold tracking-tight bg-gradient-to-r from-slate-50 via-slate-200 to-slate-400 bg-clip-text text-transparent">
           PRJCTR INSTITUTE
         </h1>
         <p className="text-slate-400 max-w-xl mx-auto text-sm md:text-base">
-          Легка точка входу в усі AI-інструменти школи. Один клік — і ти вже з
-          ментором, базою знань або новим прототипом.
+          Легка точка входу в усі AI‑інструменти школи. Один клік — і ти вже з ментором, базою знань або новим прототипом.
         </p>
       </header>
 
@@ -76,7 +73,7 @@ const Landing: React.FC<LandingProps> = ({ onEnter }) => {
 
           {/* Dotted wave ring */}
           <motion.div
-            className="absolute inset-6 rounded-full border border-dotted border-sky-400/60"
+            className="absolute inset-6 rounded-full border border-dotted border-sky-400/60"          
             animate={{ rotate: 360 }}
             transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
           />
@@ -121,7 +118,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onBack }) => {
       title: "AI Telegram Mentee",
       tag: "бот для ДЗ",
       description:
-        "Тренований AI-ментор, який швидко перевіряє домашні завдання та дає структурований фідбек у стилі кураторів PRJCTR.",
+        "Тренований AI‑ментор, який швидко перевіряє домашні завдання та дає структурований фідбек у стилі кураторів PRJCTR.",
       action: "Відкрити бота",
       href: "https://t.me/AI_TEAMN4_BOT",
     },
@@ -139,7 +136,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onBack }) => {
       title: "Mockup #1",
       tag: "prototype",
       description:
-        "Місце для наступного інструменту. Тут зʼявиться інтерактивний прототип або новий AI-сервіс.",
+        "Місце для наступного інструменту. Тут зʼявиться інтерактивний прототип або новий AI‑сервіс.",
       action: "Додати пізніше",
       href: "#",
     },
@@ -170,7 +167,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onBack }) => {
               PRJCTR INSTITUTE
             </h2>
             <p className="text-xs md:text-sm text-slate-400">
-              Self-Service · AI-ментори · курсові інструменти
+              Self‑Service · AI‑ментори · курсові інструменти
             </p>
           </div>
         </div>
@@ -193,12 +190,9 @@ const Dashboard: React.FC<DashboardProps> = ({ onBack }) => {
             className="group relative overflow-hidden rounded-3xl border border-slate-800/80 bg-slate-900/60 backdrop-blur-xl p-5 md:p-6 flex flex-col justify-between shadow-[0_18px_50px_rgba(15,23,42,0.85)] cursor-pointer"
             initial={{ opacity: 0, y: 20, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{
-              duration: 0.4,
-              delay: 0.08 * index,
-              ease: "easeOut",
-            }}
+            transition={{ duration: 0.4, delay: 0.08 * index, ease: "easeOut" }}
           >
+            {/* Accent gradients */}
             <div className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
               <div className="absolute -top-10 -right-10 h-32 w-32 rounded-full bg-sky-500/25 blur-3xl" />
               <div className="absolute -bottom-10 -left-10 h-32 w-32 rounded-full bg-indigo-500/25 blur-3xl" />
@@ -227,9 +221,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onBack }) => {
             <div className="relative z-10 mt-6 flex items-center justify-between text-xs md:text-sm text-sky-300">
               <span className="flex items-center gap-2">
                 <span className="font-medium">{card.action}</span>
-                <span className="opacity-80 group-hover:translate-x-0.5 transition-transform">
-                  ↗
-                </span>
+                <span className="opacity-80 group-hover:translate-x-0.5 transition-transform">↗</span>
               </span>
               <span className="text-[0.7rem] uppercase tracking-[0.2em] text-slate-500">
                 {card.href === "#" ? "SOON" : "LIVE"}
