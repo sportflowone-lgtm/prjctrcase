@@ -124,12 +124,12 @@ const Dashboard: React.FC<DashboardProps> = ({ onBack }) => {
     },
     {
       id: 2,
-      title: "Individualized KB",
+      title: "Your AI Assistant",
       tag: "база знань",
       description:
-        "Персоналізована база знань під твій курс: конспекти, кейси, запитання до співбесіди та додаткові матеріали.",
-      action: "Відкрити (скоро)",
-      href: "#",
+        "Персоналізована база знань під твій курс.",
+      action: "Відкрити",
+      href: "https://notebooklm.google.com/notebook/921a14a1-d248-4d16-ab05-e953f25de3c3?pli=1",
     },
     {
       id: 3,
