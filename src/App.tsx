@@ -156,12 +156,12 @@ const Dashboard: React.FC<DashboardProps> = ({ onBack }) => {
     },
     {
       id: 3,
-      title: "Mockup #1",
-      tag: "prototype",
+      title: "Course Progress Tracker",
+      tag: "Gamification",
       description:
-        "Місце для наступного інструменту. Тут зʼявиться інтерактивний прототип або новий AI-сервіс.",
-      action: "Додати пізніше",
-      href: "#",
+        "Гейміфікація прогресу курсу для більш ефективного навчання.",
+      action: "Подивитися",
+      href: "https://www.youtube.com/watch?v=GwLsw3IJTs0",
     },
     {
       id: 4,
