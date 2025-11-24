@@ -1,18 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const bgGradient = "bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950";
 
 const App = () => {
-  const [view, setView] = useState<"landing" | "dashboard">("landing");
+  const [view, setView] = useState<"landing" | "dashboard" | "mockup1">(
+    "landing"
+  );
   const [showMentor, setShowMentor] = useState(false);
-
-  // Закрытие поп-апа по ESC
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setShowMentor(false);
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, []);
 
   return (
     <div
@@ -24,18 +19,7 @@ const App = () => {
         <div className="absolute -right-40 bottom-10 h-72 w-72 rounded-full bg-indigo-500/40 blur-3xl" />
       </div>
 
-      <AnimatePresence mode="wait">
-        {view === "landing" ? (
-          <Landing
-            key="landing"
-            onEnter={() => setShowMentor(true)} // 👉 теперь кнопка «Що це?» открывает поп-ап
-          />
-        ) : (
-          <Dashboard key="dashboard" onBack={() => setView("landing")} />
-        )}
-      </AnimatePresence>
-
-      {/* 👉 ВАЖНО: Pop-up рендерим ПОД контентом страницы */}
+      {/* HeyGen popup */}
       <MentorPopup
         open={showMentor}
         onClose={() => setShowMentor(false)}
@@ -44,6 +28,32 @@ const App = () => {
           setView("dashboard");
         }}
       />
+
+      <AnimatePresence mode="wait">
+        {view === "landing" && (
+          <Landing
+            key="landing"
+            onEnter={() => {
+              setShowMentor(true);
+            }}
+          />
+        )}
+
+        {view === "dashboard" && (
+          <Dashboard
+            key="dashboard"
+            onBack={() => setView("landing")}
+            onOpenMockup1={() => setView("mockup1")}
+          />
+        )}
+
+        {view === "mockup1" && (
+          <MockupVideoPage
+            key="mockup1"
+            onBack={() => setView("dashboard")}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 };
@@ -69,7 +79,7 @@ const Landing: React.FC<LandingProps> = ({ onEnter }) => {
           PRJCTR INSTITUTE
         </h1>
         <p className="text-slate-400 max-w-xl mx-auto text-sm md:text-base">
-          Легка точка входу в усі AI-інструменти школи. Один клік — і ти вже з ментором, базою знань або новим прототипом.
+        An easy entry point to all of your school's AI tools. One click and you're ready to start with an AI mentor, knowledge base, or new prototype.
         </p>
       </header>
 
@@ -121,7 +131,7 @@ const Landing: React.FC<LandingProps> = ({ onEnter }) => {
           whileTap={{ scale: 0.98 }}
         >
           <span className="flex items-center gap-2">
-            <span>Що це?</span>
+            <span>What is this?</span>
           </span>
           <span className="pointer-events-none absolute inset-0 -z-10 rounded-full bg-sky-500/40 blur-xl" />
         </motion.button>
@@ -132,44 +142,43 @@ const Landing: React.FC<LandingProps> = ({ onEnter }) => {
 
 interface DashboardProps {
   onBack: () => void;
+  onOpenMockup1: () => void;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ onBack }) => {
+const Dashboard: React.FC<DashboardProps> = ({ onBack, onOpenMockup1 }) => {
   const cards = [
     {
       id: 1,
       title: "AI Telegram Mentee",
-      tag: "бот для ДЗ",
+      tag: "bot for homework",
       description:
-        "Тренований AI-ментор, який швидко перевіряє домашні завдання та дає структурований фідбек у стилі кураторів PRJCTR.",
-      action: "Відкрити бота",
+"A trained AI Telegram Bot mentor who quickly checks homework assignments and provides structured feedback in the style of PRJCTR tutors.",      action: "Відкрити бота",
       href: "https://t.me/AI_TEAMN4_BOT",
     },
     {
       id: 2,
-      title: "Personal Knowledge Base",
-      tag: "база знань",
-      description:
-        "Персоналізована база знань під твій курс.",
-      action: "Відкрити",
+      title: "Your AI KB Assistant",
+      tag: "knowledge base",
+      description: "Personalized knowledge base for your course.",
+      action: "Open",
       href: "https://notebooklm.google.com/notebook/921a14a1-d248-4d16-ab05-e953f25de3c3?pli=1",
     },
     {
       id: 3,
-      title: "Course Progress Tracker",
-      tag: "Gamification",
+      title: "Telegram Gamification",
+      tag: "video",
       description:
-        "Гейміфікація прогресу курсу для більш ефективного навчання.",
-      action: "Подивитися",
-      href: "https://www.youtube.com/watch?v=GwLsw3IJTs0",
+        "Telegram Gamification tool for digital school.",
+      action: "Check it out",
+      href: "#internal-mockup1",
     },
     {
       id: 4,
-      title: "Mockup #2",
+      title: "Coming soon",
       tag: "prototype",
       description:
-        "Ще один слот під майбутній продукт: дашборд, трекер прогресу або експериментальну фічу.",
-      action: "Додати пізніше",
+        "Your next AI tool is coming soon.",
+      action: "Pending",
       href: "#",
     },
   ];
@@ -204,60 +213,137 @@ const Dashboard: React.FC<DashboardProps> = ({ onBack }) => {
       </header>
 
       <main className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-        {cards.map((card, index) => (
-          <motion.a
-            key={card.id}
-            href={card.href}
-            target={card.href.startsWith("http") ? "_blank" : undefined}
-            rel={card.href.startsWith("http") ? "noreferrer" : undefined}
-            className="group relative overflow-hidden rounded-3xl border border-slate-800/80 bg-slate-900/60 backdrop-blur-xl p-5 md:p-6 flex flex-col justify-between shadow-[0_18px_50px_rgba(15,23,42,0.85)] cursor-pointer"
-            initial={{ opacity: 0, y: 20, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 0.4, delay: 0.08 * index, ease: "easeOut" }}
-          >
-            {/* Accent gradients */}
-            <div className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-              <div className="absolute -top-10 -right-10 h-32 w-32 rounded-full bg-sky-500/25 blur-3xl" />
-              <div className="absolute -bottom-10 -left-10 h-32 w-32 rounded-full bg-indigo-500/25 blur-3xl" />
-            </div>
+        {cards.map((card, index) => {
+          const isMockup1 = card.id === 3;
 
-            <div className="relative z-10 flex flex-col gap-4">
-              <div className="flex items-center justify-between gap-3">
-                <div>
-                  <p className="text-[0.7rem] uppercase tracking-[0.22em] text-slate-400 mb-1">
-                    {card.tag}
-                  </p>
-                  <h3 className="text-lg md:text-xl font-semibold text-slate-50">
-                    {card.title}
-                  </h3>
-                </div>
-                <div className="h-9 w-9 rounded-2xl border border-slate-700/70 bg-slate-900/80 flex items-center justify-center text-slate-300 text-xs">
-                  {index + 1}
-                </div>
+          return (
+            <motion.a
+              key={card.id}
+              href={isMockup1 ? "#" : card.href}
+              onClick={(e) => {
+                if (isMockup1) {
+                  e.preventDefault();
+                  onOpenMockup1();
+                }
+              }}
+              target={
+                !isMockup1 && card.href.startsWith("http")
+                  ? "_blank"
+                  : undefined
+              }
+              rel={
+                !isMockup1 && card.href.startsWith("http")
+                  ? "noreferrer"
+                  : undefined
+              }
+              className="group relative overflow-hidden rounded-3xl border border-slate-800/80 bg-slate-900/60 backdrop-blur-xl p-5 md:p-6 flex flex-col justify-between shadow-[0_18px_50px_rgba(15,23,42,0.85)] cursor-pointer"
+              initial={{ opacity: 0, y: 20, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{
+                duration: 0.4,
+                delay: 0.08 * index,
+                ease: "easeOut",
+              }}
+            >
+              {/* Accent gradients */}
+              <div className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                <div className="absolute -top-10 -right-10 h-32 w-32 rounded-full bg-sky-500/25 blur-3xl" />
+                <div className="absolute -bottom-10 -left-10 h-32 w-32 rounded-full bg-indigo-500/25 blur-3xl" />
               </div>
 
-              <p className="text-sm text-slate-300/90 leading-relaxed">
-                {card.description}
-              </p>
-            </div>
+              <div className="relative z-10 flex flex-col gap-4">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-[0.7rem] uppercase tracking-[0.22em] text-slate-400 mb-1">
+                      {card.tag}
+                    </p>
+                    <h3 className="text-lg md:text-xl font-semibold text-slate-50">
+                      {card.title}
+                    </h3>
+                  </div>
+                  <div className="h-9 w-9 rounded-2xl border border-slate-700/70 bg-slate-900/80 flex items-center justify-center text-slate-300 text-xs">
+                    {index + 1}
+                  </div>
+                </div>
 
-            <div className="relative z-10 mt-6 flex items-center justify-between text-xs md:text-sm text-sky-300">
-              <span className="flex items-center gap-2">
-                <span className="font-medium">{card.action}</span>
-                <span className="opacity-80 group-hover:translate-x-0.5 transition-transform">↗</span>
-              </span>
-              <span className="text-[0.7rem] uppercase tracking-[0.2em] text-slate-500">
-                {card.href === "#" ? "SOON" : "LIVE"}
-              </span>
-            </div>
-          </motion.a>
-        ))}
+                <p className="text-sm text-slate-300/90 leading-relaxed">
+                  {card.description}
+                </p>
+              </div>
+
+              <div className="relative z-10 mt-6 flex items-center justify-between text-xs md:text-sm text-sky-300">
+                <span className="flex items-center gap-2">
+                  <span className="font-medium">{card.action}</span>
+                  <span className="opacity-80 group-hover:translate-x-0.5 transition-transform">
+                    ↗
+                  </span>
+                </span>
+                <span className="text-[0.7rem] uppercase tracking-[0.2em] text-slate-500">
+                  {card.href === "#" || isMockup1 ? "INTERNAL" : "LIVE"}
+                </span>
+              </div>
+            </motion.a>
+          );
+        })}
       </main>
     </motion.div>
   );
 };
 
-/** ---------- Mentor Popup Component ---------- */
+interface MockupVideoPageProps {
+  onBack: () => void;
+}
+
+const MockupVideoPage: React.FC<MockupVideoPageProps> = ({ onBack }) => {
+  const youtubeSrc = "https://www.youtube.com/embed/GwLsw3IJTs0?rel=0";
+
+  return (
+    <motion.div
+      className="relative w-full max-w-6xl px-6 pb-10 pt-6 flex flex-col gap-8 items-center"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+    >
+      <header className="w-full flex items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="h-9 w-9 rounded-2xl border border-slate-700/70 bg-gradient-to-br from-sky-500/70 to-indigo-500/80 shadow-[0_0_30px_rgba(56,189,248,0.7)]" />
+          <div>
+            <h2 className="text-lg md:text-xl font-semibold tracking-tight text-slate-50">
+              PRJCTR INSTITUTE · Mockup #1
+            </h2>
+            <p className="text-xs md:text-sm text-slate-400">
+              Demo-video · YouTube
+            </p>
+          </div>
+        </div>
+
+        <button
+          onClick={onBack}
+          className="text-xs md:text-sm text-slate-300 hover:text-sky-300 border border-slate-700/70 rounded-full px-3 py-1 bg-slate-900/60 backdrop-blur-md transition-colors"
+        >
+          ◀ Back to dashboard
+        </button>
+      </header>
+
+      <main className="w-full flex flex-col items-center gap-4">
+        <div className="relative w-full max-w-4xl aspect-video rounded-3xl overflow-hidden border border-slate-800/80 bg-slate-950 shadow-[0_18px_50px_rgba(15,23,42,0.9)]">
+          <iframe
+            src={youtubeSrc}
+            title="PRJCTR Mockup Video"
+            className="w-full h-full"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+            allowFullScreen
+          />
+        </div>
+        <p className="text-slate-400 text-xs md:text-sm text-center max-w-xl">
+          You can open video in full-screen mode by clicking the standard YouTube button in the lower right corner of the player.
+        </p>
+      </main>
+    </motion.div>
+  );
+};
+
 const MentorPopup: React.FC<{ open: boolean; onClose: () => void; onContinue: () => void; }> = ({ open, onClose, onContinue }) => {
   const videoSrc = `${import.meta.env.BASE_URL}heygen.mp4`;
 
@@ -300,8 +386,8 @@ const MentorPopup: React.FC<{ open: boolean; onClose: () => void; onContinue: ()
               </div>
 
               <div className="text-center text-slate-300 text-sm">
-                Я — <span className="text-sky-300 font-medium">AI Ментор PRJCTR</span>.  
-                Дозволь показати, як працює наш Hub.
+                I'm — <span className="text-sky-300 font-medium">AI Mentor PRJCTR</span>.  
+                Let's show how AI hub works.
               </div>
 
               {/* Buttons */}
@@ -310,14 +396,14 @@ const MentorPopup: React.FC<{ open: boolean; onClose: () => void; onContinue: ()
                   onClick={onContinue}
                   className="rounded-full px-5 py-2 text-slate-950 bg-sky-400/90 hover:bg-sky-300 transition-colors shadow-[0_0_24px_rgba(56,189,248,0.5)]"
                 >
-                  Перейти в дашборд
+                  Enter dashboard
                 </button>
 
                 <button
                   onClick={onClose}
                   className="rounded-full px-5 py-2 border border-slate-700/70 text-slate-300 hover:text-sky-300 bg-slate-900/60"
                 >
-                  Закрити
+                  Close
                 </button>
               </div>
             </div>
